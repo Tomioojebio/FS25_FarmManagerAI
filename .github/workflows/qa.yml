@@ -1,24 +1,40 @@
-name: FarmManagerAI offline QA
+name: FarmManagerAI · tests and downloadable mod
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  lua-contracts:
+  qa-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lua runtime for tests
+      - name: Install Lua 5.4 test runtime
         run: sudo apt-get update && sudo apt-get install -y liblua5.4-0
-      - name: Check Lua syntax and offline contracts
+      - name: Run offline logic and syntax tests (not FS25 runtime)
         run: python3 developer/run_lua.py
-      - name: Validate mod metadata
+      - name: Assemble the directly installable ZIP
+        run: python3 developer/build.py "${{ runner.temp }}/FS25_FarmManagerAI.zip"
+      - name: Verify archive, mod description and textures
         run: |
           python3 - <<'PY'
-          import xml.etree.ElementTree as ET
-          import pathlib
-          root=ET.parse('modDesc.xml').getroot()
-          files=[s.get('filename') for s in root.findall('.//sourceFile')]
-          assert files and all(pathlib.Path(f).is_file() for f in files), 'Missing Lua module from modDesc.xml'
-          print('Registered Lua files:',len(files))
-          print('Version:',root.findtext('version'))
+          import os,zipfile,xml.etree.ElementTree as ET
+          path=os.environ['RUNNER_TEMP']+'/FS25_FarmManagerAI.zip'
+          with zipfile.ZipFile(path) as z:
+              assert z.testzip() is None
+              names=set(z.namelist())
+              desc=ET.fromstring(z.read('modDesc.xml'))
+              lua=[x.attrib['filename'] for x in desc.findall('./extraSourceFiles/sourceFile')]
+              assert all(n in names for n in lua)
+              assert all(n in names for n in ['icon.dds','ui/white.dds','ui/fma_alert.dds'])
+              print('ZIP OK; scripts=',len(lua),'version=',desc.findtext('version'))
           PY
+      - name: Save downloadable mod build
+        uses: actions/upload-artifact@v4
+        with:
+          name: FS25_FarmManagerAI-build
+          path: ${{ runner.temp }}/FS25_FarmManagerAI.zip
+          if-no-files-found: error
+          retention-days: 30

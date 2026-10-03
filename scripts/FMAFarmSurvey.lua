@@ -2,7 +2,7 @@
 -- Only physical movement creates segments; unverified AI transfer samples are
 -- staged, and committed after the existing FS25 arrival confirmation.
 -- Never infer clear space between buildings from empty/unobserved grid cells.
-FMAFarmSurvey = {VERSION='0.20.49.0',GRID=3,MAX_EDGES=700,MAX_LIVE=40}
+FMAFarmSurvey = {VERSION='0.20.50.0',GRID=3,MAX_EDGES=700,MAX_LIVE=40}
 local S=FMAFarmSurvey
 local function good(p)
     return type(p)=='table' and type(p.x)=='number' and type(p.z)=='number' and
@@ -183,13 +183,13 @@ function S.markHazard(c,p)
 end
 -- Graph planning combines observed directed edges with the real AI road splines.
 -- Candidate edges become valid for this vehicle only after physically confirmed AI legs.
-function S.plan(c,start,finish,mode)
+function S.plan(c,start,finish,mode,options)
     if not good(start) or not good(finish) then return nil,'NEZNÁMÁ POLOHA' end
     local v=S.data(c)
     -- First try the whole real FS25 road graph, including fields kilometres
     -- away. Its output is provisional; only physical AI arrival verifies it.
     if FMAEngineRoads and FMAEngineRoads.route then
-        local roads,reason=FMAEngineRoads.route(c,start,finish,mode)
+        local roads,reason=FMAEngineRoads.route(c,start,finish,mode,options and options.maxRoadAccessMetres)
         if roads then return roads,nil end
         -- If a start/finish is outside the yard, a disconnected public road is
         -- not license to create a blind straight-line path through buildings.

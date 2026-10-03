@@ -2,7 +2,7 @@
 -- These edges are map infrastructure (POTENTIAL routes), not proof that a
 -- particular tractor+implement cleared a gate.  Only physical driving produces
 -- the 'verified' FarmSurvey records.  No changes are made to the game's map.
-FMAEngineRoads={VERSION='0.20.49.0',SAMPLE_METRES=5,MAX_EDGES=15000,MAX_SPLINES=1600,MAX_SEARCH=30000}
+FMAEngineRoads={VERSION='0.20.50.0',SAMPLE_METRES=5,MAX_EDGES=15000,MAX_SPLINES=1600,MAX_SEARCH=30000}
 local R=FMAEngineRoads
 local function isFinite(v) return type(v)=='number' and v==v and math.abs(v)<100000 end
 local function valid(x,z) return isFinite(x) and isFinite(z) end
@@ -202,7 +202,10 @@ local function pop(h)
 end
 -- Plan across the WHOLE actual FS25 spline network, not only the yard radius.
 -- This does not move a vehicle. If no connected path exists, fail closed.
-function R.route(c,start,finish,mode)
+-- Optional last-mile access is used only by the segment runner. The route planner
+-- still cannot assert any off-road passage is clear: GIANTS must drive each
+-- bounded access leg, and the progress watchdog checks actual arrival.
+function R.route(c,start,finish,mode,accessMetres)
     local roads=c and c.engineRoads
     if not roads or not roads.hasCostmap or type(roads.edges)~='table' then
         return nil,'GIANTS_SILNICE_NEJSOU_DOSTUPNÉ'
@@ -225,8 +228,12 @@ function R.route(c,start,finish,mode)
     end
     -- Do not assume that a 30m shortcut through a building connects a yard
     -- parking slot with the public road. AI has to verify the entrance first.
-    if fromDist>11*11 then return nil,'START_NENÍ_U_SILNICE' end
-    if toDist>11*11 then return nil,'CÍL_NENÍ_U_SILNICE' end
+    local access=11
+    if type(accessMetres)=='number' and accessMetres==accessMetres then
+        access=math.max(11,math.min(32,accessMetres))
+    end
+    if fromDist>access*access then return nil,'START_NENÍ_U_SILNICE' end
+    if toDist>access*access then return nil,'CÍL_NENÍ_U_SILNICE' end
     local hazard=(c.navigationMap and c.navigationMap.hazards) or {}
     local function blocked(id)
         local p=graph.nodes[id]

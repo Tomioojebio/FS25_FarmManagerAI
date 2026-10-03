@@ -2,7 +2,7 @@
 -- savegame.  This is NOT a navmesh generator and never steers/teleports vehicles.
 -- GIANTS or CP executes each short leg; the Farm Manager advances only after
 -- an engine-success stop AND an actual position check.
-FMAPathRunner={VERSION='0.20.49.0',MAX_LEGS=160,LEG_METRES=32}
+FMAPathRunner={VERSION='0.20.50.0',MAX_LEGS=160,LEG_METRES=32}
 local R=FMAPathRunner
 local function good(p)
     return p and type(p.x)=='number' and type(p.z)=='number' and p.x==p.x and p.z==p.z
@@ -62,10 +62,25 @@ function R.plan(c,record,target)
     if not good(start) or d(start,target)<34 then return nil end
     local reverse=R.reverseObserved(c,record,target,start)
     if reverse then return reverse end
-    local points,why=FMAFarmSurvey.plan(c,start,target,FMAFarmSurvey.classify(record.object))
+    -- A farm parking slot or field boundary may lie off the public road.
+    -- A bounded access leg must be driven and physically confirmed by GIANTS,
+    -- never fabricated as an already verified stretch of road.
+    local points,why=FMAFarmSurvey.plan(c,start,target,FMAFarmSurvey.classify(record.object),
+        {maxRoadAccessMetres=32})
     if type(points)~='table' then return nil,why or 'CHYBÍ SPOJENÁ TRASA' end
-    if #points<3 or d(points[1],start)>12 or d(points[#points],target)>11 then return nil,'CHYBÍ NAPOJENÍ NA SILNICI' end
+    if #points<3 or d(points[1],start)>32 or d(points[#points],target)>32 then
+        return nil,'CHYBÍ NAPOJENÍ NA SILNICI'
+    end
     local legs={};local origin=start;local accum=0;local last=points[1]
+    -- The first access hop is mandatory when the parked machine is not on road.
+    -- No straight-line teleports: createTransferJob runs actual collision-aware
+    -- engine navigation, with the normal watchdog and position gate.
+    if d(start,points[1])>11 then
+        legs[#legs+1]={x=points[1].x,z=points[1].z,
+            angle=heading(start,points[1]),tolerance=6,noRoutePlan=true,
+            roadAccess='ENTRY'}
+        origin=points[1]
+    end
     for i=2,#points do
         local p=points[i]
         if not good(p) or d(last,p)>19 then return nil end
@@ -85,7 +100,8 @@ function R.plan(c,record,target)
         if #legs>0 and d(legs[#legs],target)<11 then table.remove(legs) end
     end
     legs[#legs+1]={x=target.x,z=target.z,angle=target.angle or heading(origin,target),
-        tolerance=target.tolerance or 8,probeRadius=target.probeRadius,noRoutePlan=true}
+        tolerance=target.tolerance or 8,probeRadius=target.probeRadius,noRoutePlan=true,
+        roadAccess=d(points[#points],target)>11 and 'EXIT' or nil}
     if #legs<2 or #legs>R.MAX_LEGS then return nil end
     return {legs=legs,index=1,completeTarget=target}
 end
