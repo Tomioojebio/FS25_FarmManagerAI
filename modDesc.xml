@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='utf-8'?>
+<modDesc descVersion="105">
+    <author>Farm Manager AI project</author>
+    <version>0.20.49.0</version>
+    <title>
+        <en>Farm Manager AI - Cooperative Runtime Core</en>
+        <cz>Farm Manager AI - autonomní družstvo</cz>
+    </title>
+    <description>
+        <en>Farm Manager AI 0.20.48 for PC/Mac single player adds a proactive Farm Brain: live field truth, shift planning, ETA/readiness audits, independent harvest and forage crews, predictive staging, recovery/failover, preventive service, traffic/choke arbitration, Teach points/routes, supplies, livestock, productions, bales and bunker silos through game AI and available Courseplay. Alt+M / Alt+H controls. Grid-based mouse-card terminal with categories. Manager diagnostics and its own bounded operational log are exported to the Desktop when possible; the live game log is never opened by the mod. Alt+D also creates one self-contained FS25_FarmManagerAI_REPORT.txt with manager diagnostics, live state, operational log and current-session trace history. Machinery purchases are proposals requiring owner approval; the mod does not silently buy machinery. Development build for in-game validation. Live silage and husbandry deficits now produce real work orders when FS25 AI access is verified, otherwise explicit blocked jobs; Alt+M pointer restoration fixed. Further game testing is required; see README.txt.</en>
+        <cz>Farm Manager AI 0.20.48 pro PC/Mac singleplayer přidává proaktivní Farm Brain: živý stav polí, plán směny, ETA/readiness audit, nezávislé sklizňové a pícninářské čety, předstihovou přípravu, recovery/failover, preventivní servis, řízení provozu a úzkých míst, Teach body/trasy, zásobování, zvířata, výroby, balíky a silážní jámy přes AI hry a dostupný Courseplay. Ovládání Alt+M / Alt+H. Diagnostika a vlastní omezený provozní log Manageru se exportují na Plochu, pokud to systém dovolí; živý herní log mod nikdy neotevírá. Alt+D vytvoří jediný FS25_FarmManagerAI_REPORT.txt obsahující diagnostiku, živý stav, provozní log a TRACE této relace. Nákup techniky je pouze návrh vyžadující schválení majitele; mod techniku potichu nekupuje. Vývojové vydání k ověření ve hře. Naplněné nezhutněné jámy a nedostatky zásob u zvířat se nyní zobrazují jako zakázky; bez fyzicky ověřených AI bodů je zakázka zablokovaná. Opravena obnova kurzoru po Alt+M. Další herní testování je nutné; viz README.txt.</cz>
+    </description>
+    <iconFilename>icon.dds</iconFilename>
+    <multiplayer supported="false" />
+    <extraSourceFiles>
+        <sourceFile filename="scripts/FMAUtil.lua" />
+        <sourceFile filename="scripts/FMAOpsLog.lua" />
+        <sourceFile filename="scripts/FMALiveTelemetry.lua" />
+        <sourceFile filename="scripts/FMABlackBox.lua" />
+        <sourceFile filename="scripts/FMATestSuite.lua" />
+        <sourceFile filename="scripts/FMADevLab.lua" />
+        <sourceFile filename="scripts/FMASupportReport.lua" />
+        <sourceFile filename="scripts/FMADiagnostics.lua" />
+        <sourceFile filename="scripts/FMAJobs.lua" />
+        <sourceFile filename="scripts/FMALifecycle.lua" />
+        <sourceFile filename="scripts/FMAModHubAdapter.lua" />
+        <sourceFile filename="scripts/FMACatalog.lua" />
+        <sourceFile filename="scripts/FMACarpathianProfile.lua" />
+        <sourceFile filename="scripts/FMAPlanner.lua" />
+        <sourceFile filename="scripts/FMAGameNative.lua" />
+        <sourceFile filename="scripts/FMAEnterprise.lua" />
+        <sourceFile filename="scripts/FMAWorld.lua" />
+        <sourceFile filename="scripts/FMAWorldRegistry.lua" />
+        <sourceFile filename="scripts/FMAWorldAtlas.lua" />
+        <sourceFile filename="scripts/FMACompatibility.lua" />
+        <sourceFile filename="scripts/FMAAI.lua" />
+        <sourceFile filename="scripts/FMAControlAuthority.lua" />
+        <sourceFile filename="scripts/FMAOwnDriver.lua" />
+        <sourceFile filename="scripts/FMAState.lua" />
+        <sourceFile filename="scripts/FMAAutoRoute.lua" />
+        <sourceFile filename="scripts/FMAAssembler.lua" />
+        <sourceFile filename="scripts/FMALogistics.lua" />
+        <sourceFile filename="scripts/FMAMarketPlanner.lua" />
+        <sourceFile filename="scripts/FMARefillManager.lua" />
+        <sourceFile filename="scripts/FMAParkingManager.lua" />
+        <sourceFile filename="scripts/FMAReturnManager.lua" />
+        <sourceFile filename="scripts/FMAHeaderTransport.lua" />
+        <sourceFile filename="scripts/FMALivestockCoordinator.lua" />
+        <sourceFile filename="scripts/FMAAnimalManager.lua" />
+        <sourceFile filename="scripts/FMAProductionManager.lua" />
+        <sourceFile filename="scripts/FMACourseplay.lua" />
+        <sourceFile filename="scripts/FMATransfer.lua" />
+        <sourceFile filename="scripts/FMAFieldQuality.lua" />
+        <sourceFile filename="scripts/FMAForageCoordinator.lua" />
+        <sourceFile filename="scripts/FMABaleStorage.lua" />
+        <sourceFile filename="scripts/FMATraffic.lua" />
+        <sourceFile filename="scripts/FMAHaulageCycle.lua" />
+        <sourceFile filename="scripts/FMAFleetCoordinator.lua" />
+        <sourceFile filename="scripts/FMABunkerCoordinator.lua" />
+        <sourceFile filename="scripts/FMABaleCoordinator.lua" />
+        <sourceFile filename="scripts/FMAProcurement.lua" />
+        <sourceFile filename="scripts/FMAFarmBrain.lua" />
+        <sourceFile filename="scripts/FMANavigation.lua" />
+        <sourceFile filename="scripts/FMAEngineRoads.lua" />
+        <sourceFile filename="scripts/FMAFarmSurvey.lua" />
+        <sourceFile filename="scripts/FMAPathRunner.lua" />
+        <sourceFile filename="scripts/FMARecovery.lua" />
+        <sourceFile filename="scripts/FMAExperience.lua" />
+        <sourceFile filename="scripts/FMASelfHealing.lua" />
+        <sourceFile filename="scripts/FMATeach.lua" />
+        <sourceFile filename="scripts/FMAServiceManager.lua" />
+        <sourceFile filename="scripts/FMAWorkEvidence.lua" />
+        <sourceFile filename="scripts/FMAController.lua" />
+        <sourceFile filename="scripts/FMAJobBrief.lua" />
+        <sourceFile filename="scripts/FMAHud.lua" />
+        <sourceFile filename="scripts/main.lua" />
+    </extraSourceFiles>
+    <actions>
+        <action name="FMA_MENU" />
+        <action name="FMA_TOGGLE" />
+        <action name="FMA_PAGE" />
+        <action name="FMA_CROP" />
+        <action name="FMA_REFRESH" />
+        <action name="FMA_DIAGNOSTIC" />
+        <action name="FMA_LOAD_POINT" />
+        <action name="FMA_UNLOAD_POINT" />
+        <action name="FMA_PAGE_PREV" />
+        <action name="FMA_PAGE_NEXT" />
+        <action name="FMA_UP" />
+        <action name="FMA_DOWN" />
+        <action name="FMA_SELECT" />
+    </actions>
+    <inputBinding>
+        <actionBinding action="FMA_MENU">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_m" />
+        </actionBinding>
+        <actionBinding action="FMA_TOGGLE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_h" />
+        </actionBinding>
+        <actionBinding action="FMA_DIAGNOSTIC">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_d" />
+        </actionBinding>
+    </inputBinding>
+    <l10n>
+        <text name="input_FMA_MENU">
+            <en>FM: Farm dashboard</en>
+            <cz>FM: Přehled farmy</cz>
+        </text>
+        <text name="input_FMA_TOGGLE">
+            <en>FM: Manager on / off</en>
+            <cz>FM: Správce zapnout / vypnout</cz>
+        </text>
+        <text name="input_FMA_PAGE">
+            <en>FM: Next tab</en>
+            <cz>FM: Další karta</cz>
+        </text>
+        <text name="input_FMA_CROP">
+            <en>FM: Next crop</en>
+            <cz>FM: Další plodina</cz>
+        </text>
+        <text name="input_FMA_REFRESH">
+            <en>FM: Refresh plan</en>
+            <cz>FM: Obnovit plán</cz>
+        </text>
+        <text name="input_FMA_DIAGNOSTIC">
+            <en>FM: Write diagnostics</en>
+            <cz>FM: Zapsat diagnostiku</cz>
+        </text>
+        <text name="input_FMA_LOAD_POINT">
+            <en>FM: UAL loading point</en>
+            <cz>FM: Bod nakládky UAL</cz>
+        </text>
+        <text name="input_FMA_UNLOAD_POINT">
+            <en>FM: UAL unloading point</en>
+            <cz>FM: Bod vykládky UAL</cz>
+        </text>
+        <text name="input_FMA_PAGE_PREV">
+            <en>FM: Previous tab</en>
+            <cz>FM: Předchozí karta</cz>
+        </text>
+        <text name="input_FMA_PAGE_NEXT">
+            <en>FM: Next tab</en>
+            <cz>FM: Další karta</cz>
+        </text>
+        <text name="input_FMA_UP">
+            <en>FM: Previous row</en>
+            <cz>FM: Předchozí řádek</cz>
+        </text>
+        <text name="input_FMA_DOWN">
+            <en>FM: Next row</en>
+            <cz>FM: Další řádek</cz>
+        </text>
+        <text name="input_FMA_SELECT">
+            <en>FM: Select / change</en>
+            <cz>FM: Potvrdit / změnit</cz>
+        </text>
+    </l10n>
+</modDesc>

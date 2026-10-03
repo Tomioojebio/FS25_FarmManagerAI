@@ -1,0 +1,24 @@
+name: FarmManagerAI offline QA
+on:
+  push:
+  pull_request:
+jobs:
+  lua-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua runtime for tests
+        run: sudo apt-get update && sudo apt-get install -y liblua5.4-0
+      - name: Check Lua syntax and offline contracts
+        run: python3 developer/run_lua.py
+      - name: Validate mod metadata
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          import pathlib
+          root=ET.parse('modDesc.xml').getroot()
+          files=[s.get('filename') for s in root.findall('.//sourceFile')]
+          assert files and all(pathlib.Path(f).is_file() for f in files), 'Missing Lua module from modDesc.xml'
+          print('Registered Lua files:',len(files))
+          print('Version:',root.findtext('version'))
+          PY
