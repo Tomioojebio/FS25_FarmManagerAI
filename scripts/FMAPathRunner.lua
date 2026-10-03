@@ -75,10 +75,15 @@ function R.plan(c,record,target)
     -- The first access hop is mandatory when the parked machine is not on road.
     -- No straight-line teleports: createTransferJob runs actual collision-aware
     -- engine navigation, with the normal watchdog and position gate.
-    if d(start,points[1])>11 then
+    local entryMetres=d(start,points[1])
+    local exitMetres=d(points[#points],target)
+    if entryMetres>4 then
+        -- A short access hop must not be accepted while still parked several
+        -- metres short of the road. The usual 7m transit tolerance is unsafe
+        -- for a 5m yard exit.
         legs[#legs+1]={x=points[1].x,z=points[1].z,
-            angle=heading(start,points[1]),tolerance=6,noRoutePlan=true,
-            roadAccess='ENTRY'}
+            angle=heading(start,points[1]),tolerance=math.max(1.5,math.min(3,entryMetres*0.45)),
+            noRoutePlan=true,roadAccess='ENTRY'}
         origin=points[1]
     end
     for i=2,#points do
@@ -94,14 +99,29 @@ function R.plan(c,record,target)
         end
         if #legs>R.MAX_LEGS-2 then return nil end
     end
-    if d(origin,target)<11 then
-        -- Native navigation can handle the last few metres; avoid a nearly
-        -- identical intermediate goal which could confuse ownership callbacks.
+    if exitMetres>4 then
+        -- Finish the road BEFORE the off-road access. Without this checkpoint,
+        -- a ~32m unconsumed road tail plus a ~32m field approach can become a
+        -- single ~64m shortcut through an unverified obstacle.
+        local roadEnd=points[#points]
+        local roadTail=d(origin,roadEnd)
+        if roadTail>2 then
+            legs[#legs+1]={x=roadEnd.x,z=roadEnd.z,
+                angle=heading(origin,roadEnd),
+                tolerance=math.max(1.5,math.min(4,roadTail*0.4)),
+                noRoutePlan=true,roadAccess='ROAD_END'}
+            origin=roadEnd
+        end
+    elseif d(origin,target)<11 then
+        -- Only collapse near-duplicate intermediate ROAD goals. Never remove
+        -- the last verified road goal when a separate field exit is needed.
         if #legs>0 and d(legs[#legs],target)<11 then table.remove(legs) end
     end
     legs[#legs+1]={x=target.x,z=target.z,angle=target.angle or heading(origin,target),
-        tolerance=target.tolerance or 8,probeRadius=target.probeRadius,noRoutePlan=true,
-        roadAccess=d(points[#points],target)>11 and 'EXIT' or nil}
+        tolerance=exitMetres>4 and math.min(target.tolerance or 8,
+            math.max(1.5,math.min(3,exitMetres*0.45))) or (target.tolerance or 8),
+        probeRadius=target.probeRadius,noRoutePlan=true,
+        roadAccess=exitMetres>4 and 'EXIT' or nil}
     if #legs<2 or #legs>R.MAX_LEGS then return nil end
     return {legs=legs,index=1,completeTarget=target}
 end
@@ -125,7 +145,7 @@ function R.advance(c,a,outcome)
     if outcome~='success' or a.stopReason or a.playerTakeover then return false end
     local at=plan.legs[plan.index]
     local x,z=FMAUtil.position(a.vehicle and a.vehicle.object)
-    if not good({x=x,z=z}) or d({x=x,z=z},at)>math.max(7,tonumber(at.tolerance) or 7) then
+    if not good({x=x,z=z}) or d({x=x,z=z},at)>math.max(1.5,tonumber(at.tolerance) or 7) then
         a.stopReason='Naučený úsek nepotvrzen polohou stroje; nepokračuji naslepo'
         return false
     end
