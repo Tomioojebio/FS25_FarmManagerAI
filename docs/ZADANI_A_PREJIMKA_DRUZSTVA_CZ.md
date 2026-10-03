@@ -43,6 +43,19 @@
 8. **Scénář F – regresní ovládání:** otevřít/zavřít `Alt+M` a ověřit volnou kameru, E, Enter, ESC a Courseplay; žádné problémy se save.
 9. **Důkazní měření:** poloha a fyzické ujeté metry, job ownership, motor, skutečná práce na poli/jámě, množství převáženého materiálu, závěsy, kolize, návrat. Jeden report Alt+D; běžný `log.txt` jen když report nezachytí engine chybu.
 
+## Další požadavky z návrhu reálného JZD — backlog, ne hotové funkce
+- Směny, kvalifikace, únava pracovníků a předávání práce mezi osádkami; žádný virtuální pracovník nesmí obejít fyziku vozidla ani GIANTS/CP.
+- Před zahájením zakázky kontrola stavu stroje, servis, vhodnost agregace a výkonu, správné náplně a skutečná hmotnost/naložení tam, kde je hra umí zjistit.
+- Celý řetězec v delší perspektivě: **kontrola → sestavení → doplnění/vážení → přejezd → práce → kontrola výsledku → odvoz → návrat → vyčištění a odstavení**.
+- Pracovní návaznosti živočišné, rostlinné i výrobní části; mlékárna, kejda, hnůj, siláž, plodiny, skladové vstupy/výstupy a obsluha výrob.
+- Přehled nákladů, možnost ekonomicky doporučit nový stroj, logika prodeje a doplňování zásob; nenakupovat drahou techniku automaticky bez jasného pověření.
+- Krizové situace: poškozený/stojící stroj, neprůjezdný objekt, nedostatek paliva, ucpaný koridor, nefunkční trigger, vypnutý Courseplay. Náhradní postup smí běžet jen po ověření reálného stavu.
+- Živé mapování skutečné mapy a postupné učení bezpečných projetých cest (i alternativních), ale **bez úpravy** původních cest nebo budov Karpatského venkova. Přidané silážní jámy, sila a prodejní místa musí být zjištěny živým skenem.
+- Správa hráčem řízeného traktoru jako člena čety; hráč může občas řídit sám a pak předat řízení zpět. Automatika nemění jeho E, Enter ani kameru.
+- Robustní menu podobně přehledné jako Courseplay, ovladatelné myší i klávesnicí; v konzoli jasně vidět aktivní zaměstnance, vytíženost, chybějící stroje, možnosti nákupu, úkoly a problémy.
+
+**Stav:** Výše uvedené jsou dlouhodobé požadavky. Přítomnost názvu modulu v ZIPu není důkaz, že je některý z těchto pracovních procesů dokončen. Každý se musí samostatně přijmout fyzickým testem.
+
 ## Pořadí další práce
 - **P0 – provozní kontinuita:** přijetí a potvrzení AI startu → reálný odjezd → bezpečný segmentovaný přejezd → skutečné fyzické vykonání → uvolnění řízení → bezpečný návrat. Dlouhá cesta nesmí být nahrazena fiktivním zkratem.
 - **P1 – konkrétní zaseklé stroje:** 6R 250/9620 připojení; LEXION 6900 v poli 64; XERION/6R/9R v silážní jámě. Opravu každého případu musí potvrdit nový in-game report, nejen nový test.
